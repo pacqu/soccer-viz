@@ -5,16 +5,32 @@ import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
 import Typography from '@mui/material/Typography';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import axios from "axios";
+import { Routes, Route, useParams } from 'react-router-dom';
 
-function App() {
-  const cardTitles = ['England','European Championship','France','Germany','Italy','Spain','World Cup']
-  const cards = cardTitles.map(title => (
+function Matches() {
+  let { leagueId } = useParams();
+  //console.log(leagueId)
+  const [matches, setMatches] = useState([])
+  useEffect(() => {
+    const getMatches = async () => await axios.get(`/matches/${leagueId}`)
+      .then((res) => {
+        //console.log('hello')
+        console.log(res)
+        setMatches(res.data)
+      })
+      .catch((err) => {
+        console.log(err)
+      })
+      getMatches()
+  }, [])
+  const matchCards = matches.map((match) => (
     <Grid item xs={3}>
       <Card sx={{minHeight: "200px"}}>
         <CardContent>
         <Typography gutterBottom variant="h5" component="div">
-              {title}
+              {match.label}
             </Typography>
         </CardContent>
       </Card>
@@ -25,7 +41,7 @@ function App() {
       <Grid container>
         <Grid xs={1}></Grid>
         <Grid container xs={10} spacing={2}>
-          {cards}
+          {matchCards}
         </Grid>
         <Grid xs={1}></Grid>
       </Grid>
@@ -33,4 +49,4 @@ function App() {
   );
 }
 
-export default App;
+export default Matches;

@@ -1,11 +1,12 @@
 import json
 from nis import match
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, json
 import pandas as pd
 import random
 import ast
 
 app = Flask(__name__)
+app.config['JSON_AS_ASCII'] = False
 
 english_matches = pd.read_csv("./data/matches_England.csv")
 euro_matches = pd.read_csv("./data/matches_European_Championship.csv")
@@ -36,12 +37,12 @@ def get_matches(league_index):
     #print(league_matches.loc[:,["wyId","gameweek","label"]].to_dict('records'))
     return jsonify(league_matches.loc[:,["wyId","gameweek","label","date"]].to_dict('records'))
 
-@app.route("/matches/<int:league_index>/<int:wy_id>")
+@app.route("/matches/<int:league_index>/match/<int:wy_id>")
 def get_match(league_index, wy_id):
     league_matches = match_list[league_index]
     return jsonify(league_matches[league_matches.wyId == wy_id].to_dict('records')[0])
 
-@app.route("/match_events/<int:league_index>/<int:match_id>")
+@app.route("/matches/<int:league_index>/match/<int:match_id>/events")
 def get_match_events(league_index, match_id):
     def event_summary(row):
         game_time = round(row.eventSec / 60) + (45 if row.matchPeriod == '2H' else 0)
@@ -50,9 +51,10 @@ def get_match_events(league_index, match_id):
         return "{game_time}' - {player_name} {event_name}".format(game_time=game_time, player_name=player_name, event_name=event_name) 
     match_events = event_list[league_index].groupby('matchId').get_group(match_id)
     match_events.loc[:,'summary_str'] = match_events.apply(event_summary, axis="columns")
-    return jsonify(match_events.to_dict('records'))
+    match_events = match_events.fillna('')
+    return json.dumps(match_events.to_dict('records'))
 
-@app.route("/match_positions/<int:league_index>/<int:match_id>")
+@app.route("/matches/<int:league_index>/match/<int:match_id>/positions")
 def get_match_positions(league_index, match_id):
     def position_split(row):
         pos_obj = ast.literal_eval(row.positions[1:-1])
@@ -107,3 +109,5 @@ def get_player(player_id):
     player = players[players.wyId == player_id]
     return jsonify(player.to_dict('records'))
 
+if __name__ == "__main__":
+    app.run(debug=True, )
