@@ -96,6 +96,8 @@ def get_event_details(league_index, match_id, event_id):
         return ', '.join(tag_str)
     event.loc[:,'summary_str'] = event.apply(event_summary, axis="columns")
     event.loc[:,'tag_str'] = event.apply(tag_string, axis="columns")
+    #Get Players -> Dict (ID: Player Name)
+    #Get Coaches -> Dict (ID: Coach Name)
     return jsonify(event.to_dict('records')[0])
 
 

@@ -7,12 +7,12 @@ import CardMedia from '@mui/material/CardMedia';
 import Typography from '@mui/material/Typography';
 import React, { useEffect, useState } from 'react';
 import axios from "axios";
-import { Routes, Route, useParams } from 'react-router-dom';
+import { Routes, Route, useParams, useNavigate, Link } from 'react-router-dom';
+import CircularProgress from '@mui/material/CircularProgress';
 
 function Match() {
   let { leagueId, matchId } = useParams();
-  //console.log(leagueId)
-  const [matchDetails, setMatchDetails] = useState([])
+  const [matchDetails, setMatchDetails] = useState({})
   const [matchEvents, setMatchEvents] = useState([])
   const [matchPositions, setMatchPositions] = useState([])
   useEffect(() => {
@@ -45,22 +45,35 @@ function Match() {
     getMatchPositions()
   }, [])
   const eventCards = matchEvents.map((event) => (
-    <Grid item xs={3}>
-      <Card sx={{minHeight: "200px"}}>
+    <Grid item xs={12} sx={{ marginBottom: "15px" }}>
+      <Card>
         <CardContent>
-        <Typography gutterBottom variant="h5" component="div">
-              {event.summary_str}
-            </Typography>
+          <Typography gutterBottom variant="h5" component="div">
+            {event.summary_str}
+          </Typography>
         </CardContent>
       </Card>
     </Grid>
   ))
+  const detailsCard = Object.keys(matchDetails).length ? (
+    <Grid item xs={11} sx={{ marginBottom: "15px" }}>
+      <Card sx={{ width: '100%' }}>
+        <Typography gutterBottom variant="h5" component="div">
+          {matchDetails.label}
+        </Typography>
+      </Card>
+    </Grid>
+  ) : (<CircularProgress />)
+  //console.log(eventCards)
   return (
     <div className="App">
       <Grid container>
         <Grid xs={1}></Grid>
-        <Grid container xs={10} spacing={2}>
-          {eventCards}
+        <Grid xs={7} spacing={2}>
+          {detailsCard}
+        </Grid>
+        <Grid xs={3} sx={{ height: "100vh", overflowY: "scroll" }} id="events" justifyContent="center" alignItems="center">
+          {eventCards.length ? eventCards : <CircularProgress />}
         </Grid>
         <Grid xs={1}></Grid>
       </Grid>

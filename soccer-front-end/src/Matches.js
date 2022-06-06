@@ -4,15 +4,17 @@ import Grid from '@mui/material/Grid';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
+import CardActionArea from '@mui/material/CardActionArea';
 import Typography from '@mui/material/Typography';
+import Button from '@mui/material/Button';
 import React, { useEffect, useState } from 'react';
 import axios from "axios";
-import { Routes, Route, useParams } from 'react-router-dom';
+import { Routes, Route, useParams, useNavigate, Link } from 'react-router-dom';
 
 function Matches() {
   let { leagueId } = useParams();
-  //console.log(leagueId)
   const [matches, setMatches] = useState([])
+  const navigate = useNavigate();
   useEffect(() => {
     const getMatches = async () => await axios.get(`/matches/${leagueId}`)
       .then((res) => {
@@ -25,14 +27,24 @@ function Matches() {
       })
       getMatches()
   }, [])
-  const matchCards = matches.map((match) => (
-    <Grid item xs={3}>
-      <Card sx={{minHeight: "200px"}}>
-        <CardContent>
-        <Typography gutterBottom variant="h5" component="div">
-              {match.label}
-            </Typography>
-        </CardContent>
+  const matchCards = matches.map(match => (
+    <Grid item xs={4}>
+      <Card>
+        <CardActionArea>
+          <Link to={`match/${match.wyId}`} >
+            <CardContent>
+              <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
+                Gameweek {match.gameweek}
+              </Typography>
+              <Typography variant="h5" component="div">
+                {match.label}
+              </Typography>
+              <Typography sx={{ mb: 1.5 }} color="text.secondary">
+                Date: {match.date}
+              </Typography>
+            </CardContent>
+          </Link>
+        </CardActionArea>
       </Card>
     </Grid>
   ))
@@ -41,6 +53,9 @@ function Matches() {
       <Grid container>
         <Grid xs={1}></Grid>
         <Grid container xs={10} spacing={2}>
+          <Grid item container xs={12} sx={{height:"100px"}} direction="row" >
+            <Button variant="outlined" onClick={() => navigate(-1)}>Go back</Button>
+          </Grid>
           {matchCards}
         </Grid>
         <Grid xs={1}></Grid>
