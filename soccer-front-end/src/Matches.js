@@ -51,11 +51,10 @@ function Matches() {
   return (
     <div className="App">
       <Grid container>
-        <Grid xs={1}></Grid>
+        <Grid container xs={1} sx={{ height: "100px" }}>
+          <Button variant="outlined" onClick={() => navigate(-1)}>Go back</Button>
+        </Grid>
         <Grid container xs={10} spacing={2}>
-          <Grid item container xs={12} sx={{height:"100px"}} direction="row" >
-            <Button variant="outlined" onClick={() => navigate(-1)}>Go back</Button>
-          </Grid>
           {matchCards}
         </Grid>
         <Grid xs={1}></Grid>
