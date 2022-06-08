@@ -16,18 +16,21 @@ function Match() {
   const [matchDetails, setMatchDetails] = useState({})
   const [matchEvents, setMatchEvents] = useState([])
   const [matchPositions, setMatchPositions] = useState([])
-  const [team1Players, setTeam1Players] = useState([])
-  const [team2Players, setTeam2Players] = useState([]) 
+  const [matchPlayers, setMatchPlayers] = useState([])
   const navigate = useNavigate();
   useEffect(() => {
     const getMatchDetails = async () => await axios.get(`/matches/${leagueId}/match/${matchId}`)
       .then((res) => {
         console.log(res)
         setMatchDetails(res.data)
-        let team1Ids = [];
-        console.log(res.data['team1.formation.lineup'])
-        res.data['team1.formation.lineup'].forEach(player => team1Ids.push(player))
-        console.log(team1Ids)
+        let playerIds = [];
+        const team1 = JSON.parse(res.data['team1.formation'])
+        const team2 = JSON.parse(res.data['team2.formation'])
+        for (const team of [team1, team2]){
+          team.lineup.forEach(player => playerIds.push(player.playerId))
+          team.bench.forEach(player => playerIds.push(player.playerId))
+        }
+        getPlayers(playerIds.join(','))
       })
       .catch((err) => {
         console.log(err)
@@ -48,10 +51,10 @@ function Match() {
       .catch((err) => {
         console.log(err)
       })
-    const getTeam1 = async (team1Ids) => await axios.get(`/players?id=${team1Ids}`)
+    const getPlayers = async (playerIds) => await axios.get(`/player?id=${playerIds}`)
       .then((res) => {
         console.log(res)
-        setTeam1Players(res.data)
+        setMatchPlayers(res.data)
       })
       .catch((err) => {
         console.log(err)
@@ -64,9 +67,7 @@ function Match() {
     <Grid item xs={12} sx={{ marginBottom: "15px" }}>
       <Card>
         <CardContent>
-          <Typography gutterBottom variant="h5" component="div">
-            {event.summary_str}
-          </Typography>
+          {event.summary_str}
         </CardContent>
       </Card>
     </Grid>
