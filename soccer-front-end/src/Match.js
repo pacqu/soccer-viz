@@ -1,9 +1,9 @@
-import logo from './logo.svg';
 import './App.css';
+import MatchEvent from './MatchEvent';
+import MatchDetails from './MatchDetails';
 import Grid from '@mui/material/Grid';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
-import CardMedia from '@mui/material/CardMedia';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import React, { useEffect, useState } from 'react';
@@ -21,84 +21,46 @@ function Match() {
   useEffect(() => {
     const getMatchDetails = async () => await axios.get(`/matches/${leagueId}/match/${matchId}`)
       .then((res) => {
-        console.log(res)
         setMatchDetails(res.data)
         let playerIds = [];
         const team1 = JSON.parse(res.data['team1.formation'])
         const team2 = JSON.parse(res.data['team2.formation'])
-        for (const team of [team1, team2]){
+        for (const team of [team1, team2]) {
           team.lineup.forEach(player => playerIds.push(player.playerId))
           team.bench.forEach(player => playerIds.push(player.playerId))
         }
         getPlayers(playerIds.join(','))
       })
-      .catch((err) => {
-        console.log(err)
-      })
+      .catch((err) => { console.log(err) })
     const getMatchEvents = async () => await axios.get(`/matches/${leagueId}/match/${matchId}/events`)
-      .then((res) => {
-        console.log(res)
-        setMatchEvents(res.data)
-      })
-      .catch((err) => {
-        console.log(err)
-      })
+      .then((res) => { setMatchEvents(res.data) })
+      .catch((err) => { console.log(err) })
     const getMatchPositions = async () => await axios.get(`/matches/${leagueId}/match/${matchId}/positions`)
-      .then((res) => {
-        console.log(res)
-        setMatchPositions(res.data)
-      })
-      .catch((err) => {
-        console.log(err)
-      })
+      .then((res) => { setMatchPositions(res.data) })
+      .catch((err) => { console.log(err) })
     const getPlayers = async (playerIds) => await axios.get(`/player?id=${playerIds}`)
-      .then((res) => {
-        console.log(res)
-        setMatchPlayers(res.data)
-      })
-      .catch((err) => {
-        console.log(err)
-      })
+      .then((res) => { setMatchPlayers(res.data) })
+      .catch((err) => { console.log(err) })
     getMatchDetails()
     getMatchEvents()
     getMatchPositions()
   }, [])
-  const eventCards = matchEvents.map((event) => (
-    <Grid item xs={12} sx={{ marginBottom: "15px" }}>
-      <Card>
-        <CardContent>
-          {event.summary_str}
-        </CardContent>
-      </Card>
-    </Grid>
-  ))
-  const detailsCard = Object.keys(matchDetails).length ? (
-    <Grid item xs={11} sx={{ marginBottom: "15px" }}>
-      <Card sx={{ width: '100%' }}>
-        <Typography gutterBottom variant="h5" component="div">
-          {matchDetails.label}
-        </Typography>
-        <Typography gutterBottom variant="body1" component="div">
-          Date: {matchDetails.date}
-        </Typography>
-        <Typography gutterBottom variant="body1" component="div">
-          Venue: {matchDetails.venue}
-        </Typography>
-      </Card>
-    </Grid>
-  ) : (<CircularProgress />)
-  //console.log(eventCards)
   return (
     <div className="App">
       <Grid container>
         <Grid item container xs={1} sx={{ height: "100px" }}>
-            <Button variant="outlined" onClick={() => navigate(-1)}>Go back</Button>
+          <Button variant="outlined" onClick={() => navigate(-1)}>Go back</Button>
         </Grid>
         <Grid xs={7} spacing={2}>
-          {detailsCard}
+          {(Object.keys(matchDetails).length && Object.keys(matchPlayers).length) ? <MatchDetails details={matchDetails} players={matchPlayers}/> : <CircularProgress />}
         </Grid>
         <Grid xs={3} sx={{ height: "100vh", overflowY: "scroll" }} id="events" justifyContent="center" alignItems="center">
-          {eventCards.length ? eventCards : <CircularProgress />}
+          {(matchEvents.length && Object.keys(matchPlayers).length) ? (
+            matchEvents.map(event => {
+              const player = event.playerId === 0 ? null : matchPlayers[event.playerId]
+              return <MatchEvent event={event} player={player} />
+            }
+            )) : <CircularProgress />}
         </Grid>
         <Grid xs={1}></Grid>
       </Grid>

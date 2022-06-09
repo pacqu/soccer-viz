@@ -1,5 +1,4 @@
 import json
-from nis import match
 from flask import Flask, jsonify, request, json
 import pandas as pd
 import random
@@ -53,13 +52,6 @@ def get_match(league_index, wy_id):
 
 @app.route("/matches/<int:league_index>/match/<int:match_id>/events")
 def get_match_events(league_index, match_id):
-    '''def event_summary(row):
-        game_time = round(row.eventSec / 60) + (45 if row.matchPeriod == '2H' else 0)
-        player_name = '' if not len(players[players.wyId == row.playerId]['shortName'].values) else players[players.wyId == row.playerId]['shortName'].values[0].encode('utf-8').decode('unicode-escape')
-        event_name = row.subEventName if not (isinstance(row.tagsList,str) and '101' in row.tagsList[1:-1].split(',')) else "GOAL!!!"
-        return "{game_time}' - {player_name} {event_name}".format(game_time=game_time, player_name=player_name, event_name=event_name) 
-    match_events = event_list[league_index].groupby('matchId').get_group(match_id)
-    match_events.loc[:,'summary_str'] = match_events.apply(event_summary, axis="columns")'''
     match_events = event_list[league_index].groupby('matchId').get_group(match_id)
     match_events = match_events.fillna('')
     return jsonify(match_events.to_dict('records'))
@@ -115,13 +107,13 @@ def get_player():
         lastName = row.lastName.encode('utf-8').decode('unicode-escape')
         middleName = row.middleName.encode('utf-8').decode('unicode-escape')
         shortName = row.shortName.encode('utf-8').decode('unicode-escape')
-        return pd.Series([firstName, lastName, middleName, shortName],index=['firstName', 'lastName', 'middleName', 'shortName'])
+        role = json.dumps(ast.literal_eval(row.role))
+        return pd.Series([firstName, lastName, middleName, shortName,role],index=['firstName', 'lastName', 'middleName', 'shortName','role'])
     player_ids = ast.literal_eval(request.args.get('id'))
-    players_q = players[players.wyId.isin(player_ids)].loc[:,['firstName','lastName','middleName','role','shortName']].copy()
-    #.encode('utf-8').decode('unicode-escape')
+    players_q = players[players.wyId.isin(player_ids)].loc[:,['firstName','lastName','middleName','role','shortName','wyId']].copy().set_index('wyId')
     players_q = players_q.fillna('')
-    players_q.loc[:, ['firstName','lastName','middleName','role','shortName']] = players_q.apply(player_name_decode, axis=1)
-    return jsonify(players_q.to_dict('records'))
+    players_q.loc[:, ['firstName','lastName','middleName','shortName','role']] = players_q.apply(player_name_decode, axis=1)
+    return jsonify(players_q.to_dict('index'))
 
 if __name__ == "__main__":
     app.run(debug=True, ) 

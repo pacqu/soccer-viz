@@ -1,4 +1,3 @@
-import logo from './logo.svg';
 import './App.css';
 import Grid from '@mui/material/Grid';
 import Card from '@mui/material/Card';
