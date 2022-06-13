@@ -51,12 +51,12 @@ function Match() {
         <Grid item container xs={1} sx={{ height: "100px" }}>
           <Button variant="outlined" onClick={() => navigate(-1)}>Go back</Button>
         </Grid>
-        <Grid xs={7} spacing={2}>
+        <Grid xs={6} spacing={2}>
           {(Object.keys(matchDetails).length && Object.keys(matchPlayers).length) ? <MatchDetails details={matchDetails} players={matchPlayers}/> : <CircularProgress />}
         </Grid>
-        <Grid xs={3} sx={{ height: "100vh", overflowY: "scroll" }} id="events" justifyContent="center" alignItems="center">
+        <Grid xs={4} sx={{ height: "100vh", overflowY: "scroll" }} id="events" justifyContent="center" alignItems="center">
           {(matchEvents.length && Object.keys(matchPlayers).length) ? (
-            matchEvents.map(event => {
+            matchEvents.slice(0,20).map(event => {
               const player = event.playerId === 0 ? null : matchPlayers[event.playerId]
               return <MatchEvent event={event} player={player} />
             }

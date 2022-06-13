@@ -71,16 +71,11 @@ def get_match_positions(league_index, match_id):
     return jsonify(player_positions.to_dict('records'))
     
 
-@app.route("/event/<int:league_index>/<int:match_id>/<int:event_id>")
+@app.route("/matches/<int:league_index>/match/<int:match_id>/events/<int:event_id>")
 def get_event_details(league_index, match_id, event_id):
     league_events = event_list[league_index]
     print(event_id)
     event = league_events[league_events.id == event_id]
-    def event_summary(row):
-        game_time = round(row.eventSec / 60) + (45 if row.matchPeriod == '2H' else 0)
-        player_name = '' if not len(players[players.wyId == row.playerId]['shortName'].values) else players[players.wyId == row.playerId]['shortName'].values[0]
-        event_name = row.subEventName if not (isinstance(row.tagsList,str) and '101' in row.tagsList[1:-1].split(',')) else "GOAL"
-        return "{game_time}' - {player_name} {event_name}".format(game_time=game_time, player_name=player_name, event_name=event_name) 
     def tag_string(row):
         tag_str = []
         for tag_id in ast.literal_eval(row.tagsList):
@@ -90,7 +85,6 @@ def get_event_details(league_index, match_id, event_id):
                 tag_str.append(tag_desc[0])
         #print(tag_str)
         return ', '.join(tag_str)
-    event.loc[:,'summary_str'] = event.apply(event_summary, axis="columns")
     event.loc[:,'tag_str'] = event.apply(tag_string, axis="columns")
     return jsonify(event.to_dict('records')[0])
 
