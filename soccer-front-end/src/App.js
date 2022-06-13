@@ -11,12 +11,12 @@ import { Link } from "react-router-dom";
 function App() {
   const cardTitles = ['England', 'European Championship', 'France', 'Germany', 'Italy', 'Spain', 'World Cup']
   const cardInfo = [
-    { type: "Club League", name: "English Premier League", sub: "2016-17 Season of England's Top Flight", image: "/static/images/eplson.jpg", alt: "Son Heung-Min dribbling against Stoke City" },
+    { type: "Club League", name: "English Premier League", sub: "2017-18 Season of England's Top Flight", image: "/static/images/eplson.jpg", alt: "Son Heung-Min dribbling against Stoke City" },
     { type: "International Tournament", name: "UEFA European Championship", sub: "2016 Edition showcasing Europe's best", image: "/static/images/italyeuros.jpeg", alt: "Andrea Pirlo dribbling against Germany" },
-    { type: "Club League", name: "Ligue 1", sub: "The tantalizing French football of 2016-17", image: "/static/images/mbappel1.jpeg", alt: "Kylian Mbappe celebrating" },
-    { type: "Club League", name: "Bundesliga", sub: "All the action of Germany's 2016-17 Season", image: "/static/images/thiagobund.jpeg", alt: "Thiago Alcantara running" },
-    { type: "Club League", name: "Serie A", sub: "2016-17's Scintillating Italian Calcio", image: "/static/images/salahseriea.jpg", alt: "Mo Salah chasing a ball" },
-    { type: "Club League", name: "La Liga", sub: "No one expects the Spanish 2016-17 season", image: "/static/images/messi.jpeg", alt: "Leo Messi showing off his shirt" },
+    { type: "Club League", name: "Ligue 1", sub: "The tantalizing French football of 2017-18", image: "/static/images/mbappel1.jpeg", alt: "Kylian Mbappe celebrating" },
+    { type: "Club League", name: "Bundesliga", sub: "All the action of Germany's 2017-18 Season", image: "/static/images/thiagobund.jpeg", alt: "Thiago Alcantara running" },
+    { type: "Club League", name: "Serie A", sub: "2017-18's Scintillating Italian Calcio", image: "/static/images/salahseriea.jpg", alt: "Mo Salah chasing a ball" },
+    { type: "Club League", name: "La Liga", sub: "No one expects the Spanish 2017-18 season", image: "/static/images/messi.jpeg", alt: "Leo Messi showing off his shirt" },
     { type: "International Tournament", name: "World Cup", sub: "The Pinnacle of Football as played in 2018", image: "/static/images/mbappemodric.jpeg", alt: "Luka Modric and Kylian Mbappe fighting for a ball" },
   ]
   const cards = cardInfo.map((card, i) => (

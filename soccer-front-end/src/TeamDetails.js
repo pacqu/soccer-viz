@@ -15,7 +15,6 @@ import Paper from '@mui/material/Paper';
 function TeamDetails(props) {
   const team = props.team
   const players = props.players
-  console.log(team)
   const lineup = team.formation.lineup.map(player => players[player.playerId])
   const bench = team.formation.bench.map(player => players[player.playerId])
   return (

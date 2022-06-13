@@ -74,18 +74,19 @@ def get_match_positions(league_index, match_id):
 @app.route("/matches/<int:league_index>/match/<int:match_id>/events/<int:event_id>")
 def get_event_details(league_index, match_id, event_id):
     league_events = event_list[league_index]
-    print(event_id)
     event = league_events[league_events.id == event_id]
+    event = event.fillna('')
     def tag_string(row):
         tag_str = []
-        for tag_id in ast.literal_eval(row.tagsList):
+        tag_arr = [] if not row.tagsList else ast.literal_eval(row.tagsList)
+        for tag_id in tag_arr:
             #print(tag_id)
             tag_desc = tags[tags.Tag == tag_id]['Description'].values
             if len(tag_desc):
                 tag_str.append(tag_desc[0])
-        #print(tag_str)
-        return ', '.join(tag_str)
-    event.loc[:,'tag_str'] = event.apply(tag_string, axis="columns")
+        tag_str = ', '.join(tag_str)
+        return pd.Series([tag_str, tag_arr], index=['tag_str', 'tag_arr'])
+    event.loc[:,['tag_str', 'tag_arr']] = event.apply(tag_string, axis="columns")
     return jsonify(event.to_dict('records')[0])
 
 
