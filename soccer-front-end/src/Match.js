@@ -58,7 +58,7 @@ function Match() {
           {(matchEvents.length && Object.keys(matchPlayers).length) ? (
             matchEvents.slice(0,20).map(event => {
               const player = event.playerId === 0 ? null : matchPlayers[event.playerId]
-              return <MatchEvent event={event} player={player} />
+              return <MatchEvent event={event} player={player} leagueId={leagueId}/>
             }
             )) : <CircularProgress />}
         </Grid>
