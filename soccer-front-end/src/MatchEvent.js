@@ -14,6 +14,7 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
+import { Graph, DefaultLink, DefaultNode } from '@visx/network';
 
 function MatchEvent(props) {
   const [eventDetails, setEventDetails] =  React.useState({})
@@ -32,25 +33,39 @@ function MatchEvent(props) {
       getEventDetails()
     }
   };
+  const nodes = eventDetails ? ([
+    { x: eventDetails.start_x * 2.16, y: eventDetails.start_y * 1.3 },
+    { x: eventDetails.end_x * 2.16, y: eventDetails.end_y * 1.3 }
+  ]) : null
+  const dataSample = eventDetails ? ({
+    nodes,
+    links: [
+      { source: nodes[0], target: nodes[1] }
+    ]
+  }) : null
   const details = (Object.keys(eventDetails).length ? (
-    <TableContainer component={Paper}>
-      <Table size="small" aria-label="a dense table">
-        <TableBody>
-          {(player ? <TableRow>
-            <TableCell component="th" scope="row">Player</TableCell>
-            <TableCell >{`${player.firstName} ${player.lastName}`}</TableCell>
-          </TableRow> : null)}
+    <>
+      <TableContainer component={Paper}>
+        <Table size="small" aria-label="a dense table">
+          <TableBody>
+            {(player ? <TableRow>
+              <TableCell component="th" scope="row">Player</TableCell>
+              <TableCell >{`${player.firstName} ${player.lastName}`}</TableCell>
+            </TableRow> : null)}
             <TableRow>
               <TableCell component="th" scope="row">Sub-Event Name:</TableCell>
               <TableCell >{eventDetails.subEventName}</TableCell>
             </TableRow>
-          <TableRow>
-            <TableCell component="th" scope="row">Event Tags:</TableCell>
-            <TableCell >{eventDetails.tag_str}</TableCell>
-          </TableRow>
-        </TableBody>
-      </Table>
-    </TableContainer>
+            <TableRow>
+              <TableCell component="th" scope="row">Event Tags:</TableCell>
+              <TableCell >{eventDetails.tag_str}</TableCell>
+            </TableRow>
+          </TableBody>
+        </Table>
+      </TableContainer>
+      <svg width={216} height={130}><Graph graph={dataSample} linkComponent={DefaultLink} nodeComponent={DefaultNode} /></svg>
+      
+    </>
   ): <CircularProgress />)
   return (
     <Accordion expanded={expanded === event.id} onChange={handleChange(event.id)} sx={{ marginBottom: "10px" }} TransitionProps={{ unmountOnExit: true }}>

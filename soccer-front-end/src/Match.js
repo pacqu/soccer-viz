@@ -15,7 +15,7 @@ function Match() {
   let { leagueId, matchId } = useParams();
   const [matchDetails, setMatchDetails] = useState({})
   const [matchEvents, setMatchEvents] = useState([])
-  const [matchPositions, setMatchPositions] = useState([])
+  const [matchPositions, setMatchPositions] = useState({})
   const [matchPlayers, setMatchPlayers] = useState([])
   const navigate = useNavigate();
   useEffect(() => {
@@ -36,7 +36,7 @@ function Match() {
       .then((res) => { setMatchEvents(res.data) })
       .catch((err) => { console.log(err) })
     const getMatchPositions = async () => await axios.get(`/matches/${leagueId}/match/${matchId}/positions`)
-      .then((res) => { setMatchPositions(res.data) })
+      .then((res) => { setMatchPositions(res.data); console.log(res) })
       .catch((err) => { console.log(err) })
     const getPlayers = async (playerIds) => await axios.get(`/player?id=${playerIds}`)
       .then((res) => { setMatchPlayers(res.data) })
@@ -47,6 +47,23 @@ function Match() {
   }, [])
   return (
     <div className="App">
+      <Grid container>
+        <Grid item container xs={1} sx={{ height: "100px" }}>
+          <Button variant="outlined" onClick={() => navigate(-1)}>Go back</Button>
+        </Grid>
+        <Grid xs={10} spacing={2}>
+          {(Object.keys(matchDetails).length && Object.keys(matchPlayers).length && Object.keys(matchPositions).length) ? <MatchDetails details={matchDetails} players={matchPlayers} positions={matchPositions}/> : <CircularProgress />}
+        </Grid>
+        <Grid xs={1}></Grid>
+      </Grid>
+    </div>
+  );
+}
+
+export default Match;
+
+/*
+<div className="App">
       <Grid container>
         <Grid item container xs={1} sx={{ height: "100px" }}>
           <Button variant="outlined" onClick={() => navigate(-1)}>Go back</Button>
@@ -65,7 +82,4 @@ function Match() {
         <Grid xs={1}></Grid>
       </Grid>
     </div>
-  );
-}
-
-export default Match;
+*/

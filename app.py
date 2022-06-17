@@ -32,8 +32,12 @@ teams = pd.read_csv("./data/teams.csv")
 
 @app.route("/matches/<int:league_index>")
 def get_matches(league_index):
-    league_matches = match_list[league_index]
+    league_matches = match_list[league_index].copy()
     #print(league_matches.loc[:,["wyId","gameweek","label"]].to_dict('records'))
+    def match_label_decode(row):
+        label = row.label.encode('utf-8').decode('unicode-escape')
+        return pd.Series([label], index=['label'])
+    league_matches.loc[:,['label']] = league_matches.apply(match_label_decode, axis=1)
     return jsonify(league_matches.loc[:,["wyId","gameweek","label","date"]].to_dict('records'))
 
 @app.route("/matches/<int:league_index>/match/<int:wy_id>")
@@ -41,13 +45,17 @@ def get_match(league_index, wy_id):
     league_matches = match_list[league_index]
     match = league_matches[league_matches.wyId == wy_id].copy()
     team1_id = match["team1.teamId"].values[0]
-    team1 = teams[teams.wyId == team1_id].loc[:,'name'].values[0]
+    team1 = teams[teams.wyId == team1_id].loc[:, 'name'].values[0].encode(
+        'utf-8').decode('unicode-escape')
     team2_id = match["team2.teamId"].values[0]
-    team2 = teams[teams.wyId == team2_id].loc[:,'name'].values[0]
+    team2 = teams[teams.wyId == team2_id].loc[:, 'name'].values[0].encode(
+        'utf-8').decode('unicode-escape')
     match.loc[:, 'team1.name'] = team1
     match.loc[:, 'team2.name'] = team2
     match.loc[:, 'team1.formation'] = json.dumps(ast.literal_eval(match.loc[:, 'team1.formation'].values[0]))
     match.loc[:, 'team2.formation'] = json.dumps(ast.literal_eval(match.loc[:, 'team2.formation'].values[0]))
+    match.loc[:, 'label'] = match.loc[:, 'label'].values[0].encode(
+        'utf-8').decode('unicode-escape')
     return jsonify(match.to_dict('records')[0])
 
 @app.route("/matches/<int:league_index>/match/<int:match_id>/events")
@@ -60,15 +68,23 @@ def get_match_events(league_index, match_id):
 def get_match_positions(league_index, match_id):
     def position_split(row):
         pos_obj = ast.literal_eval(row.positions[1:-1])
-        start_x = pos_obj[0]['x']
-        start_y = pos_obj[0]['y']
-        end_x = pos_obj[1]['x']
-        end_y = pos_obj[1]['y']
+        start_x = start_y = end_x = end_y = None
+        if type(pos_obj) is dict:
+            start_x = pos_obj['x']
+            start_y = pos_obj['y']
+            end_x = pos_obj['x']
+            end_y = pos_obj['y']
+        else:
+            start_x = pos_obj[0]['x']
+            start_y = pos_obj[0]['y']
+            end_x = pos_obj[1]['x']
+            end_y = pos_obj[1]['y']
         return pd.Series([start_x, start_y, end_x, end_y],index=['start_x', 'start_y', 'end_x', 'end_y'])
     match_events = event_list[league_index].groupby('matchId').get_group(match_id).copy()
     match_events.loc[:, ['start_x', 'start_y', 'end_x', 'end_y']] = match_events.apply(position_split, axis=1)
-    player_positions = match_events.groupby(['teamId','playerId']).mean().loc[:,['start_x', 'start_y', 'end_x', 'end_y']].reset_index()
-    return jsonify(player_positions.to_dict('records'))
+    match_events = match_events.fillna('')
+    player_positions = match_events.groupby('playerId').mean().loc[:,['start_x', 'start_y', 'end_x', 'end_y']]
+    return jsonify(player_positions.to_dict('index'))
     
 
 @app.route("/matches/<int:league_index>/match/<int:match_id>/events/<int:event_id>")
@@ -86,7 +102,15 @@ def get_event_details(league_index, match_id, event_id):
                 tag_str.append(tag_desc[0])
         tag_str = ', '.join(tag_str)
         return pd.Series([tag_str, tag_arr], index=['tag_str', 'tag_arr'])
+    def position_split(row):
+        pos_obj = ast.literal_eval(row.positions[1:-1])
+        start_x = pos_obj[0]['x']
+        start_y = pos_obj[0]['y']
+        end_x = pos_obj[1]['x']
+        end_y = pos_obj[1]['y']
+        return pd.Series([start_x, start_y, end_x, end_y], index=['start_x', 'start_y', 'end_x', 'end_y'])
     event.loc[:,['tag_str', 'tag_arr']] = event.apply(tag_string, axis="columns")
+    event.loc[:, ['start_x', 'start_y', 'end_x', 'end_y']] = event.apply(position_split, axis=1)
     return jsonify(event.to_dict('records')[0])
 
 
