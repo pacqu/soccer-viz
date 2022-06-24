@@ -3,6 +3,7 @@ from flask import Flask, jsonify, request, json
 import pandas as pd
 import random
 import ast
+import datetime
 
 app = Flask(__name__)
 app.config['JSON_AS_ASCII'] = False
@@ -33,7 +34,25 @@ teams = pd.read_csv("./data/teams.csv")
 @app.route("/matches/<int:league_index>")
 def get_matches(league_index):
     league_matches = match_list[league_index].copy()
-    #print(league_matches.loc[:,["wyId","gameweek","label"]].to_dict('records'))
+    
+    #filters
+    #print(request.args.get('start'))
+    start_date = pd.to_datetime((request.args.get('start') if request.args.get('start') else '2017-8-11'), utc=True)
+    #print(start_date)
+    end_date = pd.to_datetime((request.args.get('end') if request.args.get('end') else '2018-5-13'), utc=True)
+    league_matches['date'] = pd.to_datetime(league_matches['date'], utc=True)
+    league_matches = league_matches[(league_matches.date >= start_date) & (league_matches.date <= end_date)]
+    if request.args.get('teams'):
+        #team_ids = [1612, 1610, 1624, 1625] #ast.literal_eval(request.args.get('teams'))
+        team_ids = ast.literal_eval(request.args.get('teams'))
+        league_matches = league_matches[(league_matches['team1.teamId'].isin(
+            team_ids)) | (league_matches['team2.teamId'].isin(team_ids))]
+    
+    #sorts
+    #date
+    if request.args.get('sort'):
+        league_matches = league_matches.sort_values(by=['date'], ascending=(True if request.args.get('asc') else False))
+    
     def match_label_decode(row):
         label = row.label.encode('utf-8').decode('unicode-escape')
         return pd.Series([label], index=['label'])
@@ -83,7 +102,7 @@ def get_match_positions(league_index, match_id):
     match_events = event_list[league_index].groupby('matchId').get_group(match_id).copy()
     match_events.loc[:, ['start_x', 'start_y', 'end_x', 'end_y']] = match_events.apply(position_split, axis=1)
     match_events = match_events.fillna('')
-    player_positions = match_events.groupby('playerId').mean().loc[:,['start_x', 'start_y', 'end_x', 'end_y']]
+    player_positions = match_events.groupby('playerId').mean().loc[:, ['start_x', 'start_y', 'end_x', 'end_y', 'pos_orig_x', 'pos_orig_y', 'pos_dest_x', 'pos_dest_y']]
     return jsonify(player_positions.to_dict('index'))
     
 

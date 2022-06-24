@@ -21,7 +21,7 @@ function App() {
   ]
   const cards = cardInfo.map((card, i) => (
     <Grid item xs={4}>
-      <Card>
+      <Card className='content-card'>
         <CardActionArea>
           <Link to={`matches/${i}`} >
             <CardContent>

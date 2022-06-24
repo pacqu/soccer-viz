@@ -28,7 +28,7 @@ function TeamDetails(props) {
     return { x: 1010 - (player_position.start_x * 10.1), y: 680 - (player_position.start_y * 6.8) }
   })
   return (
-    <Card sx={{ width: '100%', marginTop: '20px' }}>
+    <Card sx={{ width: '100%', marginTop: '20px' }} className='content-card'>
       <CardContent>
         <Typography gutterBottom variant="h5" component="div">
           {`${props.home ? "Home Team: " : "Away Team:"} ${team.name}`}
@@ -38,7 +38,7 @@ function TeamDetails(props) {
             <Typography gutterBottom variant="h6" component="div">
               Starting Lineup
             </Typography>
-            <TableContainer component={Paper}>
+            <TableContainer >
               <Table size="small" aria-label="a dense table">
                 <TableHead>
                   <TableRow>
@@ -61,7 +61,7 @@ function TeamDetails(props) {
             <Typography gutterBottom variant="h6" component="div">
               Bench
             </Typography>
-            <TableContainer component={Paper}>
+            <TableContainer >
               <Table size="small" aria-label="a dense table">
                 <TableHead>
                   <TableRow>

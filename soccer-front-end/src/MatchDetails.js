@@ -35,7 +35,7 @@ function MatchDetails(props) {
   const awayTeam = team1Home ? team2 : team1
   return (
     <Grid item sx={{ marginBottom: "15px" }}>
-      <Card sx={{ width: '100%' }}>
+      <Card sx={{ width: '100%' }} className='heading-card'>
         <CardContent>
           <Typography gutterBottom variant="h3" component="div">
             {details.label}

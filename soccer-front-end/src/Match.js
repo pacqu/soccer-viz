@@ -10,6 +10,7 @@ import React, { useEffect, useState } from 'react';
 import axios from "axios";
 import { Routes, Route, useParams, useNavigate, Link } from 'react-router-dom';
 import CircularProgress from '@mui/material/CircularProgress';
+import BackButton from './BackButton';
 
 function Match() {
   let { leagueId, matchId } = useParams();
@@ -17,7 +18,6 @@ function Match() {
   const [matchEvents, setMatchEvents] = useState([])
   const [matchPositions, setMatchPositions] = useState({})
   const [matchPlayers, setMatchPlayers] = useState([])
-  const navigate = useNavigate();
   useEffect(() => {
     const getMatchDetails = async () => await axios.get(`/matches/${leagueId}/match/${matchId}`)
       .then((res) => {
@@ -48,38 +48,15 @@ function Match() {
   return (
     <div className="App">
       <Grid container>
-        <Grid item container xs={1} sx={{ height: "100px" }}>
-          <Button variant="outlined" onClick={() => navigate(-1)}>Go back</Button>
-        </Grid>
-        <Grid xs={10} spacing={2}>
+        <BackButton  gridSpace={1}/>
+        <Grid xs={1} />
+        <Grid xs={8} spacing={2}>
           {(Object.keys(matchDetails).length && Object.keys(matchPlayers).length && Object.keys(matchPositions).length) ? <MatchDetails details={matchDetails} players={matchPlayers} positions={matchPositions}/> : <CircularProgress />}
         </Grid>
-        <Grid xs={1}></Grid>
+        <Grid xs={2}></Grid>
       </Grid>
     </div>
   );
 }
 
 export default Match;
-
-/*
-<div className="App">
-      <Grid container>
-        <Grid item container xs={1} sx={{ height: "100px" }}>
-          <Button variant="outlined" onClick={() => navigate(-1)}>Go back</Button>
-        </Grid>
-        <Grid xs={6} spacing={2}>
-          {(Object.keys(matchDetails).length && Object.keys(matchPlayers).length) ? <MatchDetails details={matchDetails} players={matchPlayers}/> : <CircularProgress />}
-        </Grid>
-        <Grid xs={4} sx={{ height: "100vh", overflowY: "scroll" }} id="events" justifyContent="center" alignItems="center">
-          {(matchEvents.length && Object.keys(matchPlayers).length) ? (
-            matchEvents.slice(0,20).map(event => {
-              const player = event.playerId === 0 ? null : matchPlayers[event.playerId]
-              return <MatchEvent event={event} player={player} leagueId={leagueId}/>
-            }
-            )) : <CircularProgress />}
-        </Grid>
-        <Grid xs={1}></Grid>
-      </Grid>
-    </div>
-*/
