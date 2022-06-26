@@ -8,6 +8,7 @@ import { CardActionArea } from '@mui/material';
 import React from 'react';
 import { Link } from "react-router-dom";
 
+
 function App() {
   const cardTitles = ['England', 'European Championship', 'France', 'Germany', 'Italy', 'Spain', 'World Cup']
   const cardInfo = [
@@ -50,13 +51,14 @@ function App() {
   ))
   return (
     <div className="App">
-      <Grid container >
-        <Grid xs={1}></Grid>
-        <Grid container xs={10} spacing={2} justifyContent="center">
-          {cards}
+      
+        <Grid container >
+          <Grid xs={1}></Grid>
+          <Grid container xs={10} spacing={2} justifyContent="center">
+            {cards}
+          </Grid>
+          <Grid xs={1}></Grid>
         </Grid>
-        <Grid xs={1}></Grid>
-      </Grid>
     </div>
   );
 }

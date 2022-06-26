@@ -37,9 +37,10 @@ def get_matches(league_index):
     
     #filters
     #print(request.args.get('start'))
-    start_date = pd.to_datetime((request.args.get('start') if request.args.get('start') else '2017-8-11'), utc=True)
+    start_date = pd.to_datetime((request.args.get(
+        'start') if request.args.get('start') else '2016-6-10'), utc=True)
     #print(start_date)
-    end_date = pd.to_datetime((request.args.get('end') if request.args.get('end') else '2018-5-13'), utc=True)
+    end_date = pd.to_datetime((request.args.get('end') if request.args.get('end') else '2019-5-20'), utc=True)
     league_matches['date'] = pd.to_datetime(league_matches['date'], utc=True)
     league_matches = league_matches[(league_matches.date >= start_date) & (league_matches.date <= end_date)]
     if request.args.get('teams'):
