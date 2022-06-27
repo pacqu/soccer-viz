@@ -1,14 +1,9 @@
 import './App.css';
-import MatchEvent from './MatchEvent';
 import MatchDetails from './MatchDetails';
 import Grid from '@mui/material/Grid';
-import Card from '@mui/material/Card';
-import CardContent from '@mui/material/CardContent';
-import Typography from '@mui/material/Typography';
-import Button from '@mui/material/Button';
 import React, { useEffect, useState } from 'react';
 import axios from "axios";
-import { Routes, Route, useParams, useNavigate, Link } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import CircularProgress from '@mui/material/CircularProgress';
 import BackButton from './BackButton';
 

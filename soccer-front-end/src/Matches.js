@@ -2,13 +2,10 @@ import './App.css';
 import Grid from '@mui/material/Grid';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
-import CardMedia from '@mui/material/CardMedia';
-import CardActionArea from '@mui/material/CardActionArea';
 import Typography from '@mui/material/Typography';
-import Button from '@mui/material/Button';
 import React, { useEffect, useState } from 'react';
 import axios from "axios";
-import { Routes, Route, useParams, useNavigate, Link } from 'react-router-dom';
+import {  useParams } from 'react-router-dom';
 import BackButton from './BackButton';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import TextField from '@mui/material/TextField';
@@ -19,7 +16,7 @@ import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
-
+import MatchCard from './MatchCard';
 
 
 function Matches() {
@@ -68,27 +65,7 @@ function Matches() {
   const [startDate, setStart] = useState(moment(leagueInfo[parseInt(leagueId)].start));
   const [endDate, setEnd] = useState(moment(leagueInfo[parseInt(leagueId)].end));
   const [sortBy, setSort] = useState('date');
-  const matchCards = matches.map(match => (
-    <Grid item xs={4}>
-      <Card className='content-card'>
-        <CardActionArea sx={{ minHeight: '200px' }}>
-          <Link to={`match/${match.wyId}`} >
-            <CardContent>
-              <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
-                Gameweek {match.gameweek}
-              </Typography>
-              <Typography variant="h5" component="div">
-                {match.label}
-              </Typography>
-              <Typography sx={{ mb: 1.5 }} color="text.secondary">
-                Date: {match.date}
-              </Typography>
-            </CardContent>
-          </Link>
-        </CardActionArea>
-      </Card>
-    </Grid>
-  ))
+  const matchCards = matches.map(match => <MatchCard match={match} />)
   return (
     <div className="App">
       <Grid container >

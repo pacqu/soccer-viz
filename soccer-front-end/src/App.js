@@ -2,15 +2,12 @@ import './App.css';
 import Grid from '@mui/material/Grid';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
-import CardMedia from '@mui/material/CardMedia';
 import Typography from '@mui/material/Typography';
-import { CardActionArea } from '@mui/material';
 import React from 'react';
-import { Link } from "react-router-dom";
+import LeagueCard from './LeagueCard';
 
 
 function App() {
-  const cardTitles = ['England', 'European Championship', 'France', 'Germany', 'Italy', 'Spain', 'World Cup']
   const cardInfo = [
     { type: "Club League", name: "English Premier League", sub: "2017-18 Season of England's Top Flight", image: "/static/images/eplson.jpg", alt: "Son Heung-Min dribbling against Stoke City" },
     { type: "International Tournament", name: "UEFA European Championship", sub: "2016 Edition showcasing Europe's best", image: "/static/images/italyeuros.jpeg", alt: "Andrea Pirlo dribbling against Germany" },
@@ -20,45 +17,31 @@ function App() {
     { type: "Club League", name: "La Liga", sub: "No one expects the Spanish 2017-18 season", image: "/static/images/messi.jpeg", alt: "Leo Messi showing off his shirt" },
     { type: "International Tournament", name: "World Cup", sub: "The Pinnacle of Football as played in 2018", image: "/static/images/mbappemodric.jpeg", alt: "Luka Modric and Kylian Mbappe fighting for a ball" },
   ]
-  const cards = cardInfo.map((card, i) => (
-    <Grid item xs={4}>
-      <Card className='content-card'>
-        <CardActionArea>
-          <Link to={`matches/${i}`} >
-            <CardContent>
-              <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
-                {card.type}
-              </Typography>
-            </CardContent>
-            <CardMedia
-              component="img"
-              height="200"
-              image={card.image}
-              alt={card.alt}
-            />
-            <CardContent>
-              <Typography variant="h5" component="div">
-                {card.name}
-              </Typography>
-              <Typography sx={{ mb: 1.5 }} color="text.secondary">
-                {card.sub}
-              </Typography>
-            </CardContent>
-          </Link>
-        </CardActionArea>
-      </Card>
-    </Grid>
-  ))
   return (
     <div className="App">
-      
-        <Grid container >
-          <Grid xs={1}></Grid>
-          <Grid container xs={10} spacing={2} justifyContent="center">
-            {cards}
-          </Grid>
-          <Grid xs={1}></Grid>
+      <Grid container >
+        <Grid xs={1}></Grid>
+        <Grid container xs={10} rowSpacing={2} justifyContent="center" alignItems='center' direction='row'>
+          <Card sx={{ width: '100%' }} className='heading-card'>
+            <CardContent>
+              <Typography gutterBottom variant="h3" component="div">
+                A Soccer Data Visualizer
+              </Typography>
+              <Typography gutterBottom variant="h4" component="div">
+                A visualizer for public soccer data from Europe's largest competitions from 2016-2018
+              </Typography>
+              <Typography gutterBottom variant="h6" component="div">
+                Current Visualizations: Lineup and Positional Data from 2017-18 matches from Europe's Top 5 Leagues, as well as the 2016 Euros and 2018 World Cup
+              </Typography>
+              <Typography gutterBottom variant="h6" component="div">
+                Planned Visualizations: Match Event Filtering and Positional Data, Player-Specific Event and Positional Data, Team-Specific Event and Positional Data
+              </Typography>
+            </CardContent>
+          </Card>
+          {cardInfo.map((card,i) => <LeagueCard card={card} i={i} />)}
         </Grid>
+        <Grid xs={1}></Grid>
+      </Grid>
     </div>
   );
 }

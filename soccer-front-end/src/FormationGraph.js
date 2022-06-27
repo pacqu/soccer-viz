@@ -14,8 +14,6 @@ function FormationGraph(props) {
   const team = props.team
   const players = props.players
   const positions = props.positions
-  const lineup = team.formation.lineup.map(player => players[player.playerId])
-  const bench = team.formation.bench.map(player => players[player.playerId])
   const nodes = team.formation.lineup.map(player => {
     const player_position = positions[player.playerId]
     const posCode = JSON.parse(players[player.playerId]['role'])['code2']
@@ -24,7 +22,6 @@ function FormationGraph(props) {
        y: player_position.start_y * (height / 100),
        color: posColors[posCode]
     }
-    {/*if (props.home) return { x: width - (player_position.start_x * (width / 100)), y: height - (player_position.start_y * (height / 100)) }*/}
   })
   const dataSample = { nodes, links: [] }
   console.log(dataSample)

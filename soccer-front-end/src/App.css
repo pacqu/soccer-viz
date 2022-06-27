@@ -17,11 +17,13 @@ a:hover, a:focus, a:active{
 
 .heading-card{
   background-color: #0E141B !important;
+  margin-top: 20px;
 }
 
 .content-card {
   /*background-color: #446288 !important;*/
   background-color: #223144 !important;
+  width: 95%;
 }
 
 /* Hide scrollbar for Chrome, Safari and Opera */

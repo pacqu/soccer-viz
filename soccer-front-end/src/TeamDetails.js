@@ -10,23 +10,37 @@ import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
-import Paper from '@mui/material/Paper';
-import { Graph, DefaultLink, DefaultNode } from '@visx/network';
-import { ParentSize } from '@visx/responsive';
 import FormationGraph from './FormationGraph';
 
 function TeamDetails(props) {
-  const posOrder = {'GK': 1, 'DF': 2, 'MD': 3, 'FW': 4}
+  const posOrder = { 'GK': 1, 'DF': 2, 'MD': 3, 'FW': 4 }
   const team = props.team
   const players = props.players
   const positions = props.positions
-  const lineup = team.formation.lineup.map(player => ({posCode: JSON.parse(players[player.playerId]['role'])['code2'], posNum: posOrder[JSON.parse(players[player.playerId]['role'])['code2']], ...players[player.playerId]})).sort((a,b) => a.posNum - b.posNum)
-  const bench = team.formation.bench.map(player => ({posCode: JSON.parse(players[player.playerId]['role'])['code2'], posNum: posOrder[JSON.parse(players[player.playerId]['role'])['code2']], ...players[player.playerId]})).sort((a,b) => a.posNum - b.posNum)
-  const nodes = team.formation.lineup.map(player => {
-    const player_position = positions[player.playerId]
-    if (props.home) return { x: player_position.start_x * 10.1, y: player_position.start_y * 6.8 }
-    return { x: 1010 - (player_position.start_x * 10.1), y: 680 - (player_position.start_y * 6.8) }
-  })
+  const lineup = team.formation.lineup.map(player => {
+    let posCode = '-';
+    let posNum = '-1';
+    if (players[player.playerId]) {
+      posCode = JSON.parse(players[player.playerId]['role'])['code2'];
+      posNum = posOrder[JSON.parse(players[player.playerId]['role'])['code2']]
+    }
+    else {
+      return { posCode: posCode, posNum: posNum, firstName: 'Unknown', lastName: 'Player' }
+    }
+    return { posCode: posCode, posNum: posNum, ...players[player.playerId] }
+  }).sort((a, b) => a.posNum - b.posNum)
+  const bench = team.formation.bench.map(player => {
+    let posCode = '-';
+    let posNum = '-1';
+    if (players[player.playerId]) {
+      posCode = JSON.parse(players[player.playerId]['role'])['code2'];
+      posNum = posOrder[JSON.parse(players[player.playerId]['role'])['code2']]
+    }
+    else {
+      return { posCode: posCode, posNum: posNum, firstName: 'Unknown', lastName: 'Player' }
+    }
+    return { posCode: posCode, posNum: posNum, ...players[player.playerId] }
+  }).sort((a, b) => a.posNum - b.posNum)
   return (
     <Card sx={{ width: '100%', marginTop: '20px' }} className='content-card'>
       <CardContent>
@@ -81,9 +95,11 @@ function TeamDetails(props) {
             </TableContainer>
           </Grid>
           <Grid container>
-              <FormationGraph home={props.home} width={1150} height={780} team={team} players={players} positions={positions} />
+            <Typography gutterBottom variant="h6" component="div">
+              Formation
+            </Typography>
+            <FormationGraph home={props.home} width={1150} height={780} team={team} players={players} positions={positions} />
           </Grid>
-
         </Grid>
       </CardContent>
     </Card>
